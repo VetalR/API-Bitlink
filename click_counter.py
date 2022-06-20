@@ -35,15 +35,36 @@ def count_clicks(token, bitlink):
     return response.json()['total_clicks']
 
 
+def is_bitlink(url):
+
+    header = {
+        'Authorization': f'Bearer {TOKEN}'
+    }
+    path = urlparse(url).netloc + urlparse(url).path
+    response = requests.get(
+        url=f'https://api-ssl.bitly.com/v4/bitlinks/{path}',
+        headers=header
+    )
+    return response.ok
+
+
 if __name__ == '__main__':
 
     load_dotenv()
     TOKEN = os.getenv('TOKEN_BITLY')
     link = input('Input URL: ')
 
-    try:
-        bit_link = shorten_link(TOKEN, url=link)
-    except requests.exceptions.HTTPError:
-        SystemExit('Unexpected Link, retry else')
+    if is_bitlink(link):
+        try:
+            counter = count_clicks(TOKEN, bitlink=link)
+        except requests.exceptions.HTTPError:
+            SystemExit('Unexpected bitlink, retry with another link')
+        else:
+            print('Number of clicks:', counter)
     else:
-        print('Bitlink:', bit_link)
+        try:
+            bit_link = shorten_link(TOKEN, url=link)
+        except requests.exceptions.HTTPError:
+            SystemExit('Unexpected Link, retry else')
+        else:
+            print('Bitlink:', bit_link)
