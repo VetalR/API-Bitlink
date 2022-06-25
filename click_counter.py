@@ -4,14 +4,12 @@ import requests
 from dotenv import load_dotenv
 
 
-def shorten_link(token, url):
+def shorten_link(headers, url):
 
-    header = {'Authorization': f'Bearer {token}'}
     body = {"long_url": url}
-
     response = requests.post(
         url='https://api-ssl.bitly.com/v4/bitlinks',
-        headers=header,
+        headers=headers,
         json=body
     )
     response.raise_for_status()
@@ -19,27 +17,25 @@ def shorten_link(token, url):
     return response.json()['link']
 
 
-def count_clicks(token, bitlink):
+def count_clicks(headers, bitlink):
 
-    header = {'Authorization': f'Bearer {token}'}
     parse_bitlink = urlparse(bitlink)
     response = requests.get(
         url=f'https://api-ssl.bitly.com/v4/bitlinks/{parse_bitlink.netloc}'
             f'{parse_bitlink.path}/clicks/summary',
-        headers=header
+        headers=headers
     )
     response.raise_for_status()
     return response.json()['total_clicks']
 
 
-def is_bitlink(token, url):
+def is_bitlink(headers, url):
 
-    header = {'Authorization': f'Bearer {token}'}
     parse_url = urlparse(url)
     response = requests.get(
         url=f'https://api-ssl.bitly.com/v4/bitlinks/{parse_url.netloc}'
             f'{parse_url.path}',
-        headers=header
+        headers=headers
     )
     return response.ok
 
@@ -47,15 +43,15 @@ def is_bitlink(token, url):
 if __name__ == '__main__':
 
     load_dotenv()
-    token_key = os.getenv('TOKEN_BITLY')
+    header = {'Authorization': f'Bearer {os.getenv("TOKEN_BITLY")}'}
     link = input('Input URL: ')
 
     try:
-        if is_bitlink(token_key, link):
-            counter = count_clicks(token_key, bitlink=link)
+        if is_bitlink(header, link):
+            counter = count_clicks(header, bitlink=link)
             print('Number of clicks:', counter)
         else:
-            bit_link = shorten_link(token_key, url=link)
+            bit_link = shorten_link(header, url=link)
             print('Bitlink:', bit_link)
     except requests.exceptions.HTTPError:
         print('Unexpected link, retry with another link')
