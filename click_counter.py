@@ -48,17 +48,12 @@ if __name__ == '__main__':
     token_key = os.getenv('TOKEN_BITLY')
     link = input('Input URL: ')
 
-    if is_bitlink(token_key, link):
-        try:
+    try:
+        if is_bitlink(token_key, link):
             counter = count_clicks(token_key, bitlink=link)
-        except requests.exceptions.HTTPError:
-            SystemExit('Unexpected bitlink, retry with another link')
-        else:
             print('Number of clicks:', counter)
-    else:
-        try:
-            bit_link = shorten_link(token_key, url=link)
-        except requests.exceptions.HTTPError:
-            SystemExit('Unexpected Link, retry else')
         else:
+            bit_link = shorten_link(token_key, url=link)
             print('Bitlink:', bit_link)
+    except requests.exceptions.HTTPError:
+        print('Unexpected link, retry with another link')
