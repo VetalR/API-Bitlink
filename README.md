@@ -21,10 +21,9 @@ follow link https://bitly.com/a/oauth_apps
 ## How to use
 * Activate your virtual environment
 * Run script to install the required packages `pip3 install -r {path/}API-Bitlink/requirements.txt`
-* Run script ``python {path/}API-Bitlink/click_counter.py``
-* Input full link, if you want to get bitlink or input bitlink, if you want to get count of clicks
+* Run script, instead of argument {link}, Input full link, if you want to get bitlink or input bitlink, if you want to get count of clicks
+``python {path/}API-Bitlink/click_counter.py {link}``
 
 ## Simple Example
-* To execute it: ``python click_counter.py``
-* Example input: `Input URL: https://google.com`
+* To execute it: ``python3 click_counter.py https://dvmn.org``
 * Example output `Bitlink: https://bit.ly/39BLGLE`
