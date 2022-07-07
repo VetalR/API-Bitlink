@@ -1,5 +1,6 @@
 import os
 from urllib.parse import urlparse
+import argparse
 import requests
 from dotenv import load_dotenv
 
@@ -42,16 +43,19 @@ def is_bitlink(headers, url):
 
 if __name__ == '__main__':
 
+    parser = argparse.ArgumentParser()
+    parser.add_argument('link')
+    args = parser.parse_args()
+
     load_dotenv()
     header = {'Authorization': f'Bearer {os.getenv("TOKEN_BITLY")}'}
-    link = input('Input URL: ')
 
     try:
-        if is_bitlink(header, link):
-            counter = count_clicks(header, bitlink=link)
+        if is_bitlink(header, args.link):
+            counter = count_clicks(header, bitlink=args.link)
             print('Number of clicks:', counter)
         else:
-            bit_link = shorten_link(header, url=link)
+            bit_link = shorten_link(header, url=args.link)
             print('Bitlink:', bit_link)
     except requests.exceptions.HTTPError:
         print('Unexpected link, retry with another link')
