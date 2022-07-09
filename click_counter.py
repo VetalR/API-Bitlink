@@ -1,6 +1,7 @@
+import argparse
 import os
 from urllib.parse import urlparse
-import argparse
+
 import requests
 from dotenv import load_dotenv
 
@@ -20,10 +21,12 @@ def shorten_link(headers, url):
 
 def count_clicks(headers, bitlink):
 
-    parse_bitlink = urlparse(bitlink)
+    url_components = urlparse(bitlink)
     response = requests.get(
-        url=f'https://api-ssl.bitly.com/v4/bitlinks/{parse_bitlink.netloc}'
-            f'{parse_bitlink.path}/clicks/summary',
+        url=(
+            f'https://api-ssl.bitly.com/v4/bitlinks/{url_components.netloc}'
+            f'{url_components.path}/clicks/summary'
+        ),
         headers=headers
     )
     response.raise_for_status()
@@ -32,10 +35,12 @@ def count_clicks(headers, bitlink):
 
 def is_bitlink(headers, url):
 
-    parse_url = urlparse(url)
+    url_components = urlparse(url)
     response = requests.get(
-        url=f'https://api-ssl.bitly.com/v4/bitlinks/{parse_url.netloc}'
-            f'{parse_url.path}',
+        url=(
+            f'https://api-ssl.bitly.com/v4/bitlinks/{url_components.netloc}'
+            f'{url_components.path}'
+        ),
         headers=headers
     )
     return response.ok
